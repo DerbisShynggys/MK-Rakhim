@@ -1,28 +1,22 @@
 from db import DB
-from flask import Flask, render_template
+from redirect import Redirect as redir
+from messages import Flash_messages as message
 
-request_to_base = DB()
-
-# Необходимо настроить среду для запуска Редирект
-app = Flask(__name__)
-
-class Redirect():
-
-    def redirect(self, path):
-
-        self.path = path
-
-        @app.route('/' + str(path))
-        def page():
-            return render_template('/' + str(path) + '.html')
+db = DB()
 
 
-email = input('Input email: ')
-password = input('Input password: ')
+class Registration():
 
-result = request_to_base.get_user_by_email(email, password)
-print(result)
+    def register(self, email, password):
+        self.email = email
+        self.password = password
 
-# Нужно настроить среду для Flask
-# if __name__ == '__main__':
-#     app.run(debug=True)
+        user_id = db.get_user_by_email(email, password)
+        if bool(user_id) is False:
+            db.add_user(email, password)
+            message.flash_message(self, key='success_reg')
+            redir.redir_log_page(self)
+        elif bool(user_id) is True:
+            message.flash_message(self, key='exists')
+        else:
+            print('Error')

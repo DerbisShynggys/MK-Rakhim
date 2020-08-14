@@ -19,13 +19,16 @@ class DB():
         self.password = password
 
         with self.connection:
-            self.cursor.execute("SELECT email FROM users WHERE email = '" + email + "'")
+            self.cursor.execute("SELECT * FROM users WHERE email = '" + email + "'")
             result = self.cursor.fetchall()
+            return result
+            # if not result:
+            #     id = DB.add_user(self, email, password)
+            #     return True
+            # elif result:
+            #     return result
 
-            if not result:
-                id = DB.add_user(self, email, password)
 
-            return result or id
 
     def add_user(self, email, password):
         self.email = email
